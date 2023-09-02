@@ -1,0 +1,23 @@
+FROM debian:bookworm-backports
+
+RUN apt update && apt upgrade
+RUN apt install php php-common php-mysql php-gmp php-curl php-intl php-mbstring php-xmlrpc php-gd php-xml php-cli php-zip -y
+
+RUN apt -y install php-fpm
+RUN apt install wget
+RUN wget https://wordpress.org/latest.tar.gz
+RUN tar -xvzf latest.tar.gz
+
+RUN mkdir -p /var/www
+
+RUN cp -R wordpress/. /var/www/wordpress
+RUN apt install systemctl -y
+
+RUN php -v
+#RUN php8.2-fpm
+
+#RUN adduser --gid 'www' www
+#RUN chown www:www /var/www/wordpress
+#RUN systemctl restart php8.2-fpm
+CMD bash
+

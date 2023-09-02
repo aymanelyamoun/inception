@@ -7,4 +7,4 @@ COPY assets assets
 COPY assets/www www
 RUN assets/nginx_setup.sh
 
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
