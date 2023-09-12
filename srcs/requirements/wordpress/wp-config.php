@@ -29,8 +29,8 @@ define( 'DB_USER', 'wordpress_user' );
 define( 'DB_PASSWORD', 'pass' );
 
 /** Database hostname */
-define( 'DB_HOST', 'maria:3306' );
-
+define( 'DB_HOST', 'db' );
+define('DB_PORT', '3306');
 /** Database charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8' );
 
