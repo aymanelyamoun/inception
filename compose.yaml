@@ -2,6 +2,7 @@ version: '3'
 
 services:
   db:
+    build: ./srcs/requirements/mariadb
     image: my_maria:latest
     container_name: db
     env_file: .env
@@ -12,6 +13,7 @@ services:
   wordpress:
     depends_on:
       - db
+    build: ./srcs/requirements/wordpress
     image: my_wordpress:latest
     container_name: wordpress
     env_file: .env
@@ -22,10 +24,11 @@ services:
   nginx:
     depends_on:
       - wordpress
+    build: ./srcs/requirements/nginx
     image: my_nginx:latest
     container_name: website
     ports:
-      - 80:80
+      - 443:443
     volumes:
       - wordpress:/var/www/wordpress
     networks:
@@ -33,6 +36,7 @@ services:
   static_website:
     depends_on:
       - nginx
+    build: ./srcs/bonus/static_website
     image: my_static:latest
     container_name: static_website
     volumes:
