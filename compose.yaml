@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  db:
+    image: my_maria:latest
+    container_name: db
+    env_file: .env
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - all_connect
+  wordpress:
+    depends_on:
+      - db
+    image: my_wordpress:latest
+    container_name: wordpress
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - all_connect
+  nginx:
+    depends_on:
+      - wordpress
+    image: my_nginx:latest
+    container_name: website
+    ports:
+      - 80:80
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - all_connect
+  static_website:
+    depends_on:
+      - nginx
+    image: my_static:latest
+    container_name: static_website
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - all_connect
+
+volumes:
+  wordpress:
+  dbdata:
+
+networks:
+  all_connect:
+    driver: bridge
