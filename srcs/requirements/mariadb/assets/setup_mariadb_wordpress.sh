@@ -10,16 +10,17 @@ while ! mysqladmin ping --silent; do
 done
 
 # Run SQL commands to set up WordPress user and database
-
+echo $WORDPRESS_USER >> test_file
 mysql -uroot <<EOSQL
-CREATE DATABASE IF NOT EXISTS wordpress;
-CREATE USER 'wordpress_user'@'%' IDENTIFIED BY 'pass';
-GRANT ALL ON wordpress.* TO 'wordpress_user'@'%' WITH GRANT OPTION;
+CREATE DATABASE IF NOT EXISTS ${WORDPRESS_DB_NAME};
+CREATE USER '${WORDPRESS_USER}'@'%' IDENTIFIED BY '${WORDPRESS_PASS}';
+CREATE USER '${WORDPRESS_USER2}'@'%' IDENTIFIED BY '${WORDPRESS_PASS2}';
+GRANT ALL ON ${WORDPRESS_DB_NAME}.* TO '${WORDPRESS_USER}'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOSQL
 #kill `cat /var/run/mysqld/mysqld.pid`
 
 # Stop the MariaDB server
-echo "shutting down mysql"
+#echo "shutting down mysql"
 mysqladmin shutdown
 #echo "done"

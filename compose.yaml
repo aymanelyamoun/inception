@@ -6,6 +6,10 @@ services:
     image: my_maria:latest
     container_name: db
     env_file: .env
+    environment:
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_USER=wordpress_user
+      - WORDPRESS_PASS=pass
     volumes:
       - dbdata:/var/lib/mysql
     networks:
@@ -13,10 +17,15 @@ services:
   wordpress:
     depends_on:
       - db
+      - redis
     build: ./srcs/requirements/wordpress
     image: my_wordpress:latest
     container_name: wordpress
     env_file: .env
+    environment:
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_USER=wordpress_user
+      - WORDPRESS_PASS=pass
     volumes:
       - wordpress:/var/www/wordpress
     networks:
@@ -43,10 +52,35 @@ services:
       - wordpress:/var/www/wordpress
     networks:
       - all_connect
+  redis:
+    build: ./srcs/bonus/redis
+    image: my_redis:latest
+    container_name: redis
+    volumes:
+      - redis:/data
+    networks:
+      - all_connect
+  adminer:
+    build: ./srcs/bonus/adminer
+    image: my_adminer:latest
+    container_name: adminer
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - all_connect
+  redis_commander:
+    build: ./srcs/bonus/redis_commander
+    image: my_redis_commander:latest
+    container_name: redis_commander
+    ports:
+      - 8081:8081
+    networks:
+      - all_connect
 
 volumes:
   wordpress:
   dbdata:
+  redis:
 
 networks:
   all_connect:
