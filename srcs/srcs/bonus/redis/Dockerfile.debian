@@ -1,6 +1,0 @@
-FROM debian:bullseye
-
-RUN apt update
-RUN apt install redis -y
-
-CMD redis-server

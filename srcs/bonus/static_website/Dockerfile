@@ -1,11 +1,13 @@
 FROM alpine:3.17
 
 RUN apk update
-RUN apk add php php-fpm
+RUN apk add nginx
+RUN mkdir -p /var/www
 
-RUN mkdir -p /var/www && mkdir -p /var/www/wordpress
+COPY assets assets
+COPY static /var/www/static
 
+RUN chmod +x /assets/nginx_setup.sh
+RUN /assets/nginx_setup.sh
 
-COPY static static
-
-ENTRYPOINT mv static /var/www/wordpress/static_website
+CMD ["nginx", "-g", "daemon off;"]

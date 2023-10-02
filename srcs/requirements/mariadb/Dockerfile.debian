@@ -4,10 +4,12 @@ RUN apt update
 RUN apt install mariadb-server -y
 
 COPY assets assets
+RUN sed -i 's/bind-address/#bind-adress/' /etc/mysql/mariadb.conf.d/50-server.cnf
 RUN sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
 RUN mkdir -p /var/run/mysqld && chown -R mysql:mysql /var/run/mysqld
 
-CMD mysqld --init-file=/assets/init.sql
+CMD assets/setup_mariadb_wordpress.sh
+#CMD mysqld --init-file=/assets/init.sql
 #COPY empty.sh empty.sh
 #RUN chmod +x empty.sh
 #CMD ./empty.sh
