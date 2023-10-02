@@ -7,9 +7,12 @@ services:
     container_name: db
     env_file: .env
     environment:
-      - WORDPRESS_DB_NAME=wordpress
-      - WORDPRESS_USER=wordpress_user
-      - WORDPRESS_PASS=pass
+      - DB_ROOT_PASS=DB_ROOT_P
+      - WORDPRESS_DB_NAME=$WORDPRESS_D
+      - WORDPRESS_USER=$WORDPRESS_U
+      - WORDPRESS_PASS=$WORDPRESS_P
+      - ADMIN_PASS=$ADMIN_PASSWORD
+
     volumes:
       - dbdata:/var/lib/mysql
     networks:
@@ -23,9 +26,11 @@ services:
     container_name: wordpress
     env_file: .env
     environment:
-      - WORDPRESS_DB_NAME=wordpress
-      - WORDPRESS_USER=wordpress_user
-      - WORDPRESS_PASS=pass
+      - WORDPRESS_DB_NAME=$WORDPRESS_D
+      - WORDPRESS_USER=$WORDPRESS_U
+      - WORDPRESS_PASS=$WORDPRESS_P
+      - ADMIN_PASS=$ADMIN_PASSWORD
+      - USER_PASS=$USER_P
     volumes:
       - wordpress:/var/www/wordpress
     networks:
@@ -39,17 +44,15 @@ services:
     ports:
       - 443:443
     volumes:
-      - wordpress:/var/www/wordpress
+      - /home/ael-yamo/data/wordpress:/var/www/wordpress
     networks:
       - all_connect
   static_website:
-    depends_on:
-      - nginx
     build: ./srcs/bonus/static_website
     image: my_static:latest
+    ports:
+      - 8080:80
     container_name: static_website
-    volumes:
-      - wordpress:/var/www/wordpress
     networks:
       - all_connect
   redis:
@@ -61,11 +64,15 @@ services:
     networks:
       - all_connect
   adminer:
+    depends_on:
+      - wordpress
     build: ./srcs/bonus/adminer
     image: my_adminer:latest
     container_name: adminer
     volumes:
       - wordpress:/var/www/wordpress
+    ports:
+      - 9090:9090
     networks:
       - all_connect
   redis_commander:
@@ -78,10 +85,23 @@ services:
       - all_connect
 
 volumes:
+  volumes:
   wordpress:
+    driver_opts:
+      type: none
+      device: /home/ael-yamo/data/wordpress
+      o: bind
   dbdata:
+    driver_opts:
+      type: none
+      device: /home/ael-yamo/data/mariadb
+      o: bind
   redis:
-
+      driver_opts:
+        type: none
+        device: /home/ael-yamo/data/redis
+        o: bind
+    
 networks:
   all_connect:
     driver: bridge
